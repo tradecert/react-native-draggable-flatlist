@@ -1,7 +1,7 @@
 /// <reference types="react-native-reanimated" />
 import React from "react";
 import { State as GestureState } from "react-native-gesture-handler";
-export default function AnimatedValueProvider({ children, }: {
+export default function AnimatedValueProvider({ children }: {
     children: React.ReactNode;
 }): JSX.Element;
 export declare function useAnimatedValues(): {
