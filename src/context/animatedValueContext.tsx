@@ -102,9 +102,9 @@ function useSetupAnimatedValues<T>() {
     return Math.min(Math.max(constrainedBase, maxTranslateNegative), maxTranslatePositive);
   }, []);
 
+  const dragItemOverflow = props.dragItemOverflow;
   const hoverAnim = useDerivedValue(() => {
     if (activeIndexAnim.value < 0) return 0;
-    const dragItemOverflow = props.dragItemOverflow;
     return dragItemOverflow ? touchPositionDiff.value : touchPositionDiffConstrained.value;
   }, []);
 
