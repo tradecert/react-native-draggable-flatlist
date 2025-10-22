@@ -1,12 +1,13 @@
-import { useRef } from "react";
-import Animated, {
+import {
   useDerivedValue,
+  useSharedValue,
   withSpring,
   WithSpringConfig,
 } from "react-native-reanimated";
 import { DEFAULT_ANIMATION_CONFIG } from "../constants";
 import { useAnimatedValues } from "../context/animatedValueContext";
 import { useIsActive } from "../context/cellContext";
+import { useEffect } from "react";
 
 type Params = {
   animationConfig: Partial<WithSpringConfig>;
@@ -15,8 +16,11 @@ type Params = {
 export function useOnCellActiveAnimation(
   { animationConfig }: Params = { animationConfig: {} }
 ) {
-  const animationConfigRef = useRef(animationConfig);
-  animationConfigRef.current = animationConfig;
+  const animationConfigRef = useSharedValue(animationConfig);
+
+  useEffect(() => {
+    animationConfigRef.value = animationConfig;
+  }, [animationConfig]);
 
   const isActive = useIsActive();
 
@@ -26,8 +30,8 @@ export function useOnCellActiveAnimation(
     const toVal = isActive && isTouchActiveNative.value ? 1 : 0;
     return withSpring(toVal, {
       ...DEFAULT_ANIMATION_CONFIG,
-      ...animationConfigRef.current,
-    });
+      ...animationConfigRef.value,
+    } as WithSpringConfig);
   }, [isActive]);
 
   return {

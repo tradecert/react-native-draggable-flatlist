@@ -1,3 +1,58 @@
-node_modules/**/*
-coverage/
-.idea
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+web-dist/
+expo-env.d.ts
+
+# Native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+sentry.properties
+.firebase
+*-debug.log
+expo-env.d.ts
+emulator-data
+firebase-export-*
+offline
+fastlane/report.xml
+.kotlin/
+
+# e2e
+.maestro
+
+# yarn
+.pnp.*
+.yarn/*
+# ! = keep these files
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

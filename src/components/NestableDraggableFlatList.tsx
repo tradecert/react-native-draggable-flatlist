@@ -1,16 +1,13 @@
 import React, { useRef, useState } from "react";
-import { findNodeHandle, LogBox } from "react-native";
-import Animated, {
-  useDerivedValue,
-  useSharedValue,
-} from "react-native-reanimated";
-import { DraggableFlatListProps } from "../types";
+import { LogBox } from "react-native";
+import { findNodeHandle } from "../utils";
+import { FlatList } from "react-native-gesture-handler";
+import { useDerivedValue, useSharedValue } from "react-native-reanimated";
 import DraggableFlatList from "../components/DraggableFlatList";
 import { useSafeNestableScrollContainerContext } from "../context/nestableScrollContainerContext";
 import { useNestedAutoScroll } from "../hooks/useNestedAutoScroll";
-import { typedMemo } from "../utils";
 import { useStableCallback } from "../hooks/useStableCallback";
-import { FlatList } from "react-native-gesture-handler";
+import { DraggableFlatListProps } from "../types";
 
 function NestableDraggableFlatListInner<T>(
   props: DraggableFlatListProps<T>,
