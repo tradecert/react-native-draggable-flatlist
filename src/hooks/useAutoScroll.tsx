@@ -19,7 +19,7 @@ export function useAutoScroll() {
     activeCellSize,
     hoverOffset,
     activeIndexAnim,
-    hoverAnim,
+    touchTranslate,
   } = useAnimatedValues();
 
   const hoverScreenOffset = useDerivedValue(() => {
@@ -80,7 +80,8 @@ export function useAutoScroll() {
 
     // Only enable auto-scroll if the user has actually moved the drag
     // This prevents auto-scrolling when starting a drag near an edge
-    const hasMovedDrag = Math.abs(hoverAnim.value) > 1;
+    // Check touchTranslate (actual finger/mouse movement) not hoverAnim (which includes auto-scroll effects)
+    const hasMovedDrag = Math.abs(touchTranslate.value) > 1;
 
     return hasScrolledToTarget && isAtEdge && !isEdgeDisabled && cellIsActive && hasMovedDrag;
   }, []);
