@@ -85,12 +85,14 @@ function CellRendererComponent<T>(props: Props<T>) {
   });
 
   const onCellLayout = useStableCallback((e?: LayoutChangeEvent) => {
+    // Reset the held translate value when layout is measured
+    // This prevents flicker by ensuring we only reset after measurements are updated
+    heldTanslate.value = 0;
     updateCellMeasurements();
     if (onLayout && e) onLayout(e);
   });
 
   useEffect(() => {
-    heldTanslate.value = 0;
     if (isWeb) {
       // onLayout isn't called on web when the cell index changes, so we manually re-measure
       requestAnimationFrame(() => {
