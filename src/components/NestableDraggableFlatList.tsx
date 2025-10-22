@@ -1,21 +1,16 @@
 import React, { useRef, useState } from "react";
-import { findNodeHandle, LogBox } from "react-native";
-import Animated, {
-  useDerivedValue,
-  useSharedValue,
-} from "react-native-reanimated";
+import { LogBox } from "react-native";
+import { findNodeHandle } from "../utils";
+// Animated IS needed otherwise TS error on build
+import Animated, { useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { DraggableFlatListProps } from "../types";
 import DraggableFlatList from "../components/DraggableFlatList";
 import { useSafeNestableScrollContainerContext } from "../context/nestableScrollContainerContext";
 import { useNestedAutoScroll } from "../hooks/useNestedAutoScroll";
-import { typedMemo } from "../utils";
 import { useStableCallback } from "../hooks/useStableCallback";
 import { FlatList } from "react-native-gesture-handler";
 
-function NestableDraggableFlatListInner<T>(
-  props: DraggableFlatListProps<T>,
-  ref?: React.ForwardedRef<FlatList<T>>
-) {
+function NestableDraggableFlatListInner<T>(props: DraggableFlatListProps<T>, ref?: React.ForwardedRef<FlatList<T>>) {
   const hasSuppressedWarnings = useRef(false);
 
   if (!hasSuppressedWarnings.current) {
@@ -27,11 +22,7 @@ function NestableDraggableFlatListInner<T>(
     hasSuppressedWarnings.current = true;
   }
 
-  const {
-    scrollableRef,
-    outerScrollOffset,
-    setOuterScrollEnabled,
-  } = useSafeNestableScrollContainerContext();
+  const { scrollableRef, outerScrollOffset, setOuterScrollEnabled } = useSafeNestableScrollContainerContext();
 
   const listVerticalOffset = useSharedValue(0);
   const [animVals, setAnimVals] = useState({});
@@ -60,30 +51,24 @@ function NestableDraggableFlatListInner<T>(
     containerRef.current.measureLayout(nodeHandle, onSuccess, onFail);
   });
 
-  const onDragBegin: DraggableFlatListProps<T>["onDragBegin"] = useStableCallback(
-    (params) => {
-      setOuterScrollEnabled(false);
-      props.onDragBegin?.(params);
-    }
-  );
+  const onDragBegin: DraggableFlatListProps<T>["onDragBegin"] = useStableCallback((params) => {
+    setOuterScrollEnabled(false);
+    props.onDragBegin?.(params);
+  });
 
-  const onDragEnd: DraggableFlatListProps<T>["onDragEnd"] = useStableCallback(
-    (params) => {
-      setOuterScrollEnabled(true);
-      props.onDragEnd?.(params);
-    }
-  );
+  const onDragEnd: DraggableFlatListProps<T>["onDragEnd"] = useStableCallback((params) => {
+    setOuterScrollEnabled(true);
+    props.onDragEnd?.(params);
+  });
 
-  const onAnimValInit: DraggableFlatListProps<T>["onAnimValInit"] = useStableCallback(
-    (params) => {
-      setListHoverOffset(params.hoverOffset);
-      setAnimVals({
-        ...params,
-        hoverOffset,
-      });
-      props.onAnimValInit?.(params);
-    }
-  );
+  const onAnimValInit: DraggableFlatListProps<T>["onAnimValInit"] = useStableCallback((params) => {
+    setListHoverOffset(params.hoverOffset);
+    setAnimVals({
+      ...params,
+      hoverOffset,
+    });
+    props.onAnimValInit?.(params);
+  });
 
   return (
     <DraggableFlatList
@@ -102,8 +87,6 @@ function NestableDraggableFlatListInner<T>(
 
 // Generic forwarded ref type assertion taken from:
 // https://fettblog.eu/typescript-react-generic-forward-refs/#option-1%3A-type-assertion
-export const NestableDraggableFlatList = React.forwardRef(
-  NestableDraggableFlatListInner
-) as <T>(
+export const NestableDraggableFlatList = React.forwardRef(NestableDraggableFlatListInner) as <T>(
   props: DraggableFlatListProps<T> & { ref?: React.ForwardedRef<FlatList<T>> }
 ) => ReturnType<typeof NestableDraggableFlatListInner>;

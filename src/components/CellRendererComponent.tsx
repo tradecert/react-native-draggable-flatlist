@@ -1,16 +1,7 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import {
-  findNodeHandle,
-  LayoutChangeEvent,
-  MeasureLayoutOnSuccessCallback,
-  StyleProp,
-  ViewStyle,
-} from "react-native";
-import Animated, {
-  runOnUI,
-  useAnimatedStyle,
-  useSharedValue,
-} from "react-native-reanimated";
+import { LayoutChangeEvent, MeasureLayoutOnSuccessCallback, StyleProp, ViewStyle } from "react-native";
+import { findNodeHandle } from "../utils";
+import Animated, { runOnUI, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useDraggableFlatListContext } from "../context/draggableFlatListContext";
 import { isWeb } from "../constants";
 import { useCellTranslate } from "../hooks/useCellTranslate";
@@ -35,12 +26,7 @@ function CellRendererComponent<T>(props: Props<T>) {
   const { cellDataRef, propsRef, containerRef } = useRefs<T>();
 
   const { horizontalAnim, scrollOffset } = useAnimatedValues();
-  const {
-    activeKey,
-    keyExtractor,
-    horizontal,
-    layoutAnimationDisabled,
-  } = useDraggableFlatListContext<T>();
+  const { activeKey, keyExtractor, horizontal, layoutAnimationDisabled } = useDraggableFlatListContext<T>();
 
   const key = keyExtractor(item, index);
   const offset = useSharedValue(-1);
@@ -121,11 +107,7 @@ function CellRendererComponent<T>(props: Props<T>) {
     };
   }, [isActive, horizontal]);
 
-  const {
-    itemEnteringAnimation,
-    itemExitingAnimation,
-    itemLayoutAnimation,
-  } = propsRef.current;
+  const { itemEnteringAnimation, itemExitingAnimation, itemLayoutAnimation } = propsRef.current;
 
   useEffect(() => {
     // NOTE: Keep an eye on reanimated LayoutAnimation refactor:
@@ -157,11 +139,7 @@ function CellRendererComponent<T>(props: Props<T>) {
       onLayout={onCellLayout}
       entering={itemEnteringAnimation}
       exiting={itemExitingAnimation}
-      layout={
-        propsRef.current.enableLayoutAnimationExperimental
-          ? itemLayoutAnimation
-          : undefined
-      }
+      layout={propsRef.current.enableLayoutAnimationExperimental ? itemLayoutAnimation : undefined}
       style={[props.style, baseStyle, animStyle]}
       pointerEvents={activeKey ? "none" : "auto"}
     >
@@ -187,8 +165,7 @@ runOnUI(() => {
 
 function stashConfig(tag: number, config: unknown) {
   "worklet";
-  if (!global.RNDFLLayoutAnimationConfigStash)
-    global.RNDFLLayoutAnimationConfigStash = {};
+  if (!global.RNDFLLayoutAnimationConfigStash) global.RNDFLLayoutAnimationConfigStash = {};
   global.RNDFLLayoutAnimationConfigStash[tag] = config;
 }
 
