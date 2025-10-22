@@ -1,9 +1,4 @@
-import {
-  runOnJS,
-  useAnimatedReaction,
-  useDerivedValue,
-  useSharedValue,
-} from "react-native-reanimated";
+import { runOnJS, useAnimatedReaction, useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { DEFAULT_PROPS, SCROLL_POSITION_TOLERANCE } from "../constants";
 import { useProps } from "../context/propsContext";
 import { useAnimatedValues } from "../context/animatedValueContext";
@@ -24,6 +19,7 @@ export function useAutoScroll() {
     activeCellSize,
     hoverOffset,
     activeIndexAnim,
+    touchTranslate,
   } = useAnimatedValues();
 
   const hoverScreenOffset = useDerivedValue(() => {
@@ -35,10 +31,7 @@ export function useAutoScroll() {
   }, []);
 
   const isScrolledDown = useDerivedValue(() => {
-    return (
-      scrollOffset.value + containerSize.value + SCROLL_POSITION_TOLERANCE >=
-      scrollViewSize.value
-    );
+    return scrollOffset.value + containerSize.value + SCROLL_POSITION_TOLERANCE >= scrollViewSize.value;
   }, []);
 
   const distToTopEdge = useDerivedValue(() => {
@@ -85,7 +78,12 @@ export function useAutoScroll() {
 
     const cellIsActive = activeIndexAnim.value >= 0;
 
-    return hasScrolledToTarget && isAtEdge && !isEdgeDisabled && cellIsActive;
+    // Only enable auto-scroll if the user has actually moved the drag
+    // This prevents auto-scrolling when starting a drag near an edge
+    // Check touchTranslate (actual finger/mouse movement) not hoverAnim (which includes auto-scroll effects)
+    const hasMovedDrag = Math.abs(touchTranslate.value) > 1;
+
+    return hasScrolledToTarget && isAtEdge && !isEdgeDisabled && cellIsActive && hasMovedDrag;
   }, []);
 
   function scrollToInternal(offset: number) {
@@ -97,17 +95,12 @@ export function useAutoScroll() {
   useDerivedValue(() => {
     if (!shouldAutoScroll.value) return;
 
-    const distFromEdge = isAtTopEdge.value
-      ? distToTopEdge.value
-      : distToBottomEdge.value;
+    const distFromEdge = isAtTopEdge.value ? distToTopEdge.value : distToBottomEdge.value;
     const speedPct = 1 - distFromEdge / autoscrollThreshold!;
     const offset = speedPct * autoscrollSpeed;
     const targetOffset = isAtTopEdge.value
       ? Math.max(0, scrollOffset.value - offset)
-      : Math.min(
-          scrollOffset.value + offset,
-          scrollViewSize.value - containerSize.value
-        );
+      : Math.min(scrollOffset.value + offset, scrollViewSize.value - containerSize.value);
 
     scrollTarget.value = targetOffset;
     // Reanimated scrollTo is crashing on android. use 'regular' scrollTo until figured out.
