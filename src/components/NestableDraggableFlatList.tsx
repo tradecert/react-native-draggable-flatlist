@@ -2,7 +2,11 @@ import React, { useRef, useState } from "react";
 import { LogBox } from "react-native";
 import { findNodeHandle } from "../utils";
 import { FlatList } from "react-native-gesture-handler";
-import { useDerivedValue, useSharedValue } from "react-native-reanimated";
+// Animated is needed as an import to generate types for Animated.View which are used inside this
+import Animated, {
+  useDerivedValue,
+  useSharedValue,
+} from "react-native-reanimated";
 import DraggableFlatList from "../components/DraggableFlatList";
 import { useSafeNestableScrollContainerContext } from "../context/nestableScrollContainerContext";
 import { useNestedAutoScroll } from "../hooks/useNestedAutoScroll";
